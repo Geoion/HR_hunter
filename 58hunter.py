@@ -11,13 +11,10 @@ from bs4 import BeautifulSoup
 import time
 #coding changing
 reload(sys)
-#SQL_RESULT
+#SQL_RESULT，数据库清洗SQL，还要一个模块未实现
 #1.SELECT * FROM company58 WHERE email !='' AND LENGTH(PHONE_NO)==11 AND SUBSTR(PHONE_NO,1,1)=='1'
 #2.SELECT * FROM company58 WHERE email =='' AND LENGTH(PHONE_NO)==11 AND SUBSTR(PHONE_NO,1,1)=='1'
 #3.SELECT * FROM company58 WHERE  not (LENGTH(PHONE_NO)==11 AND SUBSTR(PHONE_NO,1,1)=='1') and hr!=""
-
-
-
 
 #print sys.getdefaultencoding()
 sys.setdefaultencoding("utf-8")
@@ -27,14 +24,14 @@ opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookie))
 
 
 #数据库名称及城市名称进行设置
-city = "hz"
-conn = sqlite3.connect("HR_hunter_hz.db")
+city = "sz"
+conn = sqlite3.connect("HR_hunter_sz.db")
 #设置区
 
 business_list={'zplvyoujiudian':'餐饮','jiazhengbaojiexin':'家政保洁/安保','meirongjianshen':'美容/美发','zpjiudian':'酒店/旅游','zpwentiyingshi':'娱乐/休闲','zpanmo':'保健按摩','zpjianshen':'运动健身','renli':'人事/行政/后勤','siji':'司机','zpguanli':'高级管理','yewu':'销售','kefu':'客服','zpshangwumaoyi':'贸易/采购','chaoshishangye':'超市/百货/零售','zptaobao':'淘宝职位','zpfangchan':'房产中介','shichang':'市场/媒介/公关','zpguanggao':'广告/会展/咨询','zpmeishu':'美术/设计/创意','zpshengchankaifa':'普工/技工','zpshengchan':'生产管理/研发','zpwuliucangchu':'物流/仓储','xiaofeipin':'服装/纺织/食品','zhikonganfang':'质控/安防','zpqiche':'汽车制造/服务','tech':'计算机/互联网/通信','zpjixieyiqi':'电子/电气','zpjixie':'机械/仪器仪表','zpfalvzixun':'法律','zhuanye':'教育培训','fanyizhaopin':'翻译','zpxiezuochuban':'编辑/出版/印刷','zpcaiwushenji':'财务/审计/统计','jinrongtouzi':'金融/银行/证券/投资','zpjinrongbaoxian':'保险','zpyiyuanyiliao':'医院/医疗/护理','zpzhiyao':'制药/生物工程','huanbao':'环保','zpfangchanjianzhu':'建筑','zpwuye':'物业管理','nonglinmuyu':'农/林/牧/渔业','zhaopin':'其他职位'}
-city_list={'hz':'杭州','bj':'北京','sh':'上海','gz':'广州','sz':'深圳','nj':'南京'}
+city_list={''bj':'北京','sh':'上海','gz':'广州','sz':'深圳','nj':'南京',hz':'杭州','sz':'苏州'}
 
-def get_company(city,business,page):
+def get_company(city ,business ,page):
     #电脑端爬取公司信息
     url="http://" + city + ".58.com/"+business+"/pn" + str(page) + "/?PGTID=0d30365b-0004-f8b5-cb93-88ed5156515e&ClickID=1"
     req = urllib2.Request(url, headers = headers)
@@ -83,7 +80,7 @@ def get_info(id):
         email=""
 
     return [phone,hr,email]
-def save_company(city,company_name,company_id,company_url,business,page):
+def save_company(city ,company_name ,company_id ,company_url ,business ,page):
     #存数据库
     sql_inq="select count(*) from company58 WHERE COMPANY_ID='" +company_id+"'"
     cu = conn.cursor()
@@ -100,11 +97,11 @@ def save_company(city,company_name,company_id,company_url,business,page):
     time.sleep(1)
 def patch():
     #补丁
-    sql_inq="select * from company58 where HR='' Order by company_ID"
+    sql_inq = "select * from company58 where HR='' Order by company_ID"
     cu = conn.cursor()
     cu.execute(sql_inq)
     result = cu.fetchall()
-    length=len(result)
+    length = len(result)
     count=0
     for i in range(length):
         try:
